@@ -1,3 +1,6 @@
+# ==============================================================================
+# PYTEST CONFIGURATION (Unit & Architectural Testing)
+# ==============================================================================
 [tool.pytest.ini_options]
 pythonpath = [
   "."
@@ -6,18 +9,27 @@ testpaths = [
     "tests",
 ]
 
+# ==============================================================================
+# MYPY CONFIGURATION (Static Type Checking)
+# ==============================================================================
 [tool.mypy]
 python_version = "3.10"
+# Enforce strict typing globally to catch structural errors early
 strict = true
 explicit_package_bases = true
 
 [[tool.mypy.overrides]]
+# Relax strict typing rules inside the tests/ directory to allow rapid test writing
 module = "tests.*"
 disallow_untyped_defs = false
 disallow_untyped_calls = false
 
+# ==============================================================================
+# RUFF CONFIGURATION (Linting & Complexity Checks)
+# ==============================================================================
 [tool.ruff]
 line-length = 100
+# Preserve default ruff ignores (e.g. .venv) but append our intentionally broken AST fixture
 extend-exclude = ["tests/architecture/bad_ast_state.py"]
 
 [tool.ruff.lint]
@@ -25,9 +37,27 @@ extend-exclude = ["tests/architecture/bad_ast_state.py"]
 select = ["E", "F", "C90"]
 
 [tool.ruff.lint.mccabe]
-# Enforce the Orchestrator Role by failing if cyclomatic complexity > 5
+# ARCHITECTURAL ENFORCEMENT: Enforce the 'Simple Orchestrator Role'
+# Any Game State with a complexity score > 5 will fail the build, forcing logic into Services.
 max-complexity = 5
 
 [tool.ruff.lint.per-file-ignores]
-# Tests are inherently complex and not subject to the Orchestrator Role rule
+# Testing utilities are inherently complex; exempt them from the Orchestrator rule
 "tests/**/*.py" = ["C901"]
+
+# ==============================================================================
+# IMPORT LINTER (Dependency Boundary Contracts)
+# ==============================================================================
+[tool.importlinter]
+root_package = "src"
+
+[[tool.importlinter.contracts]]
+# ARCHITECTURAL ENFORCEMENT: Clean Architecture Boundaries
+# This enforces the Dependency Inversion Principle. Lower layers cannot depend on higher layers.
+name = "Clean Architecture Layers"
+type = "layers"
+layers = [
+    "src.infrastructure", # Outer Layer (Adapters): Can import Game and Engine
+    "src.game",           # Middle Layer (Business Logic): Can import Engine
+    "src.engine",         # Inner Layer (Core Machinery): Cannot import anything above it
+]

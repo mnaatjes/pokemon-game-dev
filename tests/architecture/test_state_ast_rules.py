@@ -31,6 +31,13 @@ def validate_state_ast(filepath: str, file_content: str) -> None:  # noqa: C901
                     raise ArchitectureViolation(
                         f"Found illegal 'time.sleep()' call in {filepath} on line {node.lineno}."
                     )
+        if isinstance(node, ast.BinOp) and isinstance(
+            node.op, (ast.Add, ast.Sub, ast.Mult, ast.Div)
+        ):
+            raise ArchitectureViolation(
+                f"Found illegal mathematical operation in {filepath} on line {node.lineno}. "
+                "Calculations must be delegated to Services or Models."
+            )
 
 def test_production_states_abide_by_architecture():
     """Recursively loops through production state files and ensures they pass the AST check."""
@@ -55,6 +62,10 @@ def test_ast_linter_catches_violations():
         
     with pytest.raises(ArchitectureViolation, match="Found illegal 'while' loop"):
         validate_state_ast(bad_filepath, bad_code_1)
+        
+    bad_code_math = "x = 10\ny = x + 5\n"
+    with pytest.raises(ArchitectureViolation, match="Found illegal mathematical operation"):
+        validate_state_ast("virtual_state.py", bad_code_math)
 
 # ---------------------------------------------------------
 # Execution Time Tests

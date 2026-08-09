@@ -16,6 +16,9 @@ if __name__ == "__main__":
     # 2. Architectural Complexity & Linting
     run_check(["ruff", "check", "."], "Architecture & Complexity (ruff)")
     
+    # 3. Dependency Boundary Enforcement
+    run_check(["lint-imports"], "Dependency Boundaries (import-linter)")
+    
     # 3. Unit & Architectural Tests
     run_check(["pytest", "-v"], "Unit & Architecture Tests (pytest)")
     
