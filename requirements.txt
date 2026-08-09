@@ -3,3 +3,4 @@ pydantic
 rich
 mypy
 ruff
+import-linter
