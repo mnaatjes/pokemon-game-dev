@@ -18,7 +18,9 @@ We have established a single, strictly controlled **Composition Root** located e
 
 ### The Ordered Bootstrapping Steps
 The Composition Root must assemble the application in the following strict sequence:
-1. **Environment Loading:** Parse command-line arguments and configuration files (e.g., `--debug`, `--state=BattleState`).
+1. **Environment Loading:** Parse configuration files and command-line arguments to construct a strictly-typed `AppConfig` object via `pydantic-settings`. This parsing logic must be completely isolated inside `src/infrastructure/config.py` to keep the main bootstrapper clean.
+   *   **`config.json` (Production Baseline):** Tracked in Git. Must define `initial_state` (e.g., `"MainMenuState"`), `target_fps` (e.g., `60`), and `log_level` (e.g., `"INFO"`). Since JSON cannot execute code, it does NOT contain the version number. Instead, the bootstrapper dynamically reads the version from `pyproject.toml` (the SSoT) at runtime and merges it into the configuration object.
+   *   **`.env` (Developer Overrides):** Ignored by Git. Developers use this to locally hijack the boot sequence. Must support `DEBUG_MODE=True`, `OVERRIDE_LOG_LEVEL=DEBUG`, and `OVERRIDE_INITIAL_STATE=BattleState` (to bypass the main menu during testing).
 2. **Infrastructure Initialization:** Instantiate raw OS/Hardware adapters (e.g., `TerminalLogger`, `JsonTelemetrySink`).
 3. **Domain Service Assembly:** Instantiate global services that require adapters.
 4. **Context Construction:** Assemble the `GameEngine` (which fulfills the `IContext` protocol), injecting the concrete infrastructure adapters into the Engine's defined Ports.
@@ -32,6 +34,22 @@ The Composition Root must assemble the application in the following strict seque
 These rules are automated and guaranteed by our CI/CD pipeline (`scripts/run_checks.py`):
 1. **Boundary Enforcement (`import-linter`):** The `import-linter` contract explicitly defines `src.infrastructure` as the top-most layer. It physically prevents any code within `src.engine` or `src.game` from attempting to bootstrap or import adapters, forcing all assembly to occur in the Composition Root.
 2. **Type Safety (`mypy`):** Statically ensures that the concrete infrastructure adapters instantiated in the Composition Root perfectly fulfill the Protocol requirements of `src/engine/core/interfaces.py`.
+
+### Configuration Hierarchy of Truth
+When `AppConfig` is constructed, property conflicts are resolved via a strict priority system. If multiple sources declare a value for the same property, the highest priority wins:
+1.  **CLI Arguments:** (Highest) Command-line flags explicitly passed by the user (e.g., `--state=BattleState`).
+2.  **`.env` File:** Developer local overrides (`DEBUG=True`).
+3.  **`config.json`:** The global production baseline.
+4.  **`pyproject.toml`:** (Lowest) Used exclusively as the immutable Single Source of Truth for the version number.
+
+### CLI Implementation Rules
+The CLI parser (`argparse`) must remain a thin translation layer. It is restricted to parsing the following specific parameters before passing them to the Pydantic configuration model:
+
+| Command | Flag | Type | Description |
+| :--- | :--- | :--- | :--- |
+| `python src/infrastructure/main.py` | `--debug` | `bool` | Enables development logging, telemetry streaming, and visual cheat markers. |
+| `python src/infrastructure/main.py` | `--state` | `string` | Bypasses the default `config.json` initial state, instantly booting the engine into the specified state. |
+| `python src/infrastructure/main.py` | `--log-level` | `string` | Overrides the default logging verbosity (e.g., `DEBUG`, `INFO`, `WARNING`, `ERROR`). |
 
 ## Consequences
 *   **Positive:** Absolute decoupling. The Engine and Game layers can be tested completely in isolation using mock adapters.
