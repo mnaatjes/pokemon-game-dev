@@ -1,9 +1,9 @@
 from abc import abstractmethod
 from typing import TYPE_CHECKING
-from src.states.base import State
+from src.engine.states.base import State
 
 if TYPE_CHECKING:
-    from src.core.interfaces import IContext
+    from src.engine.core.interfaces import IContext
 
 class TerminalState(State):
     """

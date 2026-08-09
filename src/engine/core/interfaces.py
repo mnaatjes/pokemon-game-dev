@@ -1,7 +1,7 @@
 from typing import Protocol, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from src.states.base import State
+    from src.engine.states.base import State
 
 class IContext(Protocol):
     """The interface representing the State Machine orchestrator."""

@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from typing import Optional
-from src.states.base import State
-from src.core.interfaces import IContext
+from src.engine.states.base import State
+from src.engine.core.interfaces import IContext
 
 class CompositeState(State, IContext):
     """

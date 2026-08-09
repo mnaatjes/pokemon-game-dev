@@ -1,5 +1,5 @@
-from src.core.interfaces import IContext
-from src.states.base import State
+from src.engine.core.interfaces import IContext
+from src.engine.states.base import State
 
 class GameEngine:
     """The central context orchestrating the State Machine lifecycle."""

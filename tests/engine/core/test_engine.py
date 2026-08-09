@@ -1,6 +1,6 @@
-from src.core.engine import GameEngine
-from src.core.interfaces import IContext
-from src.states.base import State
+from src.engine.core.engine import GameEngine
+from src.engine.core.interfaces import IContext
+from src.engine.states.base import State
 
 class DummyEndState(State):
     """A state that immediately stops the engine when reached."""
