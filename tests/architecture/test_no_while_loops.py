@@ -2,8 +2,8 @@ import ast
 import time
 import pytest
 from pathlib import Path
-from src.core.interfaces import IContext
-from src.states.base import State
+from src.engine.core.interfaces import IContext
+from src.engine.states.base import State
 
 class ArchitectureViolation(Exception):
     """Custom exception raised when architectural rules are broken."""

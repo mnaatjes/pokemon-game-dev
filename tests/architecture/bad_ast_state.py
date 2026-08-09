@@ -1,5 +1,5 @@
-from src.core.interfaces import IContext
-from src.states.base import State
+from src.engine.core.interfaces import IContext
+from src.engine.states.base import State
 
 class BadAstState(State):
     """A state designed to fail the AST architectural test."""

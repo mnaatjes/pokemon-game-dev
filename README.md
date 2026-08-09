@@ -6,24 +6,17 @@ This project strictly adheres to a combination of **Hexagonal Architecture** and
 
 ```text
 src/
-├── core/                   # (HEXAGONAL: Pure logic only, zero outside dependencies)
-│   ├── engine.py           # The heartbeat loop (Context)
-│   ├── interfaces.py       # IContext, IInputProvider, ISaveManager (Ports)
-│   ├── architecture/       # State ABCs (Transient, Wait, Composite, Terminal)
-│   │
-│   ├── battle/             # (DDD: Organized by Feature)
-│   │   ├── models.py
-│   │   ├── services.py
-│   │   └── states.py       # Concrete Battle states
-│   │
-│   └── exploration/        # (DDD: Organized by Feature)
-│       ├── models.py
-│       └── states.py       # Concrete Exploration states
+├── engine/                 # (HEXAGONAL: Highly reusable, zero game logic)
+│   ├── core/               # GameEngine, IContext, Ports
+│   └── states/             # State ABCs (Transient, Wait, Composite, Terminal)
+│
+├── game/                   # (DDD: Strictly Pokemon Business Logic)
+│   ├── battle/             # Organized by Feature
+│   └── exploration/        # Organized by Feature
 │
 └── infrastructure/         # (HEXAGONAL: Adapters for the outside world)
     ├── terminal_input.py   # Implements IInputProvider (keyboard reading)
-    ├── pygame_renderer.py  # Implements IRenderer
-    └── json_save_repo.py   # Implements ISaveManager
+    └── main.py             # Entry point hooking Game to Engine via Adapters
 ```
 
 ## Architectural Paradigms

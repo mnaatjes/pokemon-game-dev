@@ -1,5 +1,5 @@
-from src.core.interfaces import IContext
-from src.states import State, TransientState, WaitState, CompositeState, TerminalState
+from src.engine.core.interfaces import IContext
+from src.engine.states import State, TransientState, WaitState, CompositeState, TerminalState
 
 class MockContext(IContext):
     def __init__(self):
