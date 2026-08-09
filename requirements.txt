@@ -4,3 +4,4 @@ rich
 mypy
 ruff
 import-linter
+python-semantic-release

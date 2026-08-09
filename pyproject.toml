@@ -1,4 +1,15 @@
 # ==============================================================================
+# PROJECT METADATA & VERSION CONTROL (SSoT)
+# ==============================================================================
+[project]
+name = "pokemon-engine"
+version = "0.1.0"
+
+[tool.semantic_release]
+version_toml = ["pyproject.toml:project.version"]
+branch = "main"
+
+# ==============================================================================
 # PYTEST CONFIGURATION (Unit & Architectural Testing)
 # ==============================================================================
 [tool.pytest.ini_options]
