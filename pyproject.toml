@@ -1,0 +1,33 @@
+[tool.pytest.ini_options]
+pythonpath = [
+  "."
+]
+testpaths = [
+    "tests",
+]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+explicit_package_bases = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+disallow_untyped_calls = false
+
+[tool.ruff]
+line-length = 100
+extend-exclude = ["tests/architecture/bad_ast_state.py"]
+
+[tool.ruff.lint]
+# Enable Pyflakes (F), pycodestyle (E), and McCabe complexity (C90)
+select = ["E", "F", "C90"]
+
+[tool.ruff.lint.mccabe]
+# Enforce the Orchestrator Role by failing if cyclomatic complexity > 5
+max-complexity = 5
+
+[tool.ruff.lint.per-file-ignores]
+# Tests are inherently complex and not subject to the Orchestrator Role rule
+"tests/**/*.py" = ["C901"]
