@@ -26,8 +26,8 @@ We enforce the Dependency Inversion Principle via `import-linter`. The contract 
 ### 2. The Simple Orchestrator Role (`ruff`)
 We cap McCabe cyclomatic complexity at `5` globally via `ruff`. If a State contains complex mathematical branching or heavy `if/else` logic, the build fails. This physically forces the developer to offload complex logic into dedicated injected Services or Models.
 
-### 3. The Single Heartbeat Rule (AST Linter)
-A custom Python Abstract Syntax Tree (AST) parser (`tests/architecture/test_no_while_loops.py`) statically analyzes all production code. It will instantly fail the build if it detects `while`, `time.sleep()`, or `input()` calls inside any State, ensuring the game loop never hangs.
+### 3. The Single Heartbeat Rule & Strict Orchestration (AST Linter)
+A custom Python Abstract Syntax Tree (AST) parser (`tests/architecture/test_state_ast_rules.py`) statically analyzes all production code. It will instantly fail the build if it detects `while`, `time.sleep()`, or `input()` calls inside any State, ensuring the game loop never hangs. Additionally, it bans all raw mathematical operations (`+`, `-`, `*`, `/`) inside State classes, physically forcing developers to delegate calculations to Services.
 
 ## Consequences
 *   **Positive:** The Engine is permanently protected from domain logic leakage and remains highly portable. Developers are physically forced to write clean, Service-oriented, non-blocking code.
