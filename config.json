@@ -1,0 +1,5 @@
+{
+  "initial_state": "MainMenuState",
+  "target_fps": 60,
+  "log_level": "INFO"
+}

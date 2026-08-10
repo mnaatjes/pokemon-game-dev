@@ -5,3 +5,4 @@ mypy
 ruff
 import-linter
 python-semantic-release
+pydantic-settings

@@ -8,7 +8,7 @@ last_updated_at: "2026-08-09"
 # ADR 002: Composition Root and Bootstrapping Pipeline
 
 ## Status
-Pending
+Approved
 
 ## Context
 To adhere strictly to Hexagonal Architecture, our `src/engine/` and `src/game/` layers must remain entirely ignorant of the outside world. However, the system must eventually be assembled and provided with concrete infrastructure (like loggers, save managers, and renderers) to function. If bootstrapping is not strictly controlled, developers may inject domain logic into infrastructure or vice versa, creating tightly coupled spaghetti code that is impossible to test.
