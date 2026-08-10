@@ -21,7 +21,8 @@ def json_config_settings_source() -> Dict[str, Any]:
     config_file = Path("config.json")
     if config_file.exists():
         with open(config_file, "r") as f:
-            return json.load(f)
+            from typing import cast
+            return cast(Dict[str, Any], json.load(f))
     return {}
 
 
@@ -52,12 +53,12 @@ class AppConfig(BaseSettings):
     @classmethod
     def settings_customise_sources(
         cls,
-        settings_cls,
-        init_settings,
-        env_settings,
-        dotenv_settings,
-        file_secret_settings,
-    ):
+        settings_cls: type[BaseSettings],
+        init_settings: Any,
+        env_settings: Any,
+        dotenv_settings: Any,
+        file_secret_settings: Any,
+    ) -> tuple[Any, ...]:
         # Insert the JSON configuration source at the lowest priority (below .env)
         return (
             init_settings,
@@ -82,7 +83,7 @@ def load_environment() -> AppConfig:
 
     # We only pass values to Pydantic if the user actually supplied them via CLI.
     # Otherwise, Pydantic will fall back to .env or config.json.
-    cli_overrides = {}
+    cli_overrides: Dict[str, Any] = {}
     if args.debug:
         cli_overrides["debug_mode"] = True
     if args.state:

@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from typing import Optional
 from src.engine.states.base import State
-from src.engine.core.interfaces import IContext
+from src.engine.core.interfaces import IContext, ILogger, IEventBus
 
 class CompositeState(State, IContext):
     """
@@ -10,6 +10,19 @@ class CompositeState(State, IContext):
     """
     def __init__(self, initial_sub_state: State):
         self._current_sub_state: Optional[State] = initial_sub_state
+        self._parent_context: Optional[IContext] = None
+
+    @property
+    def logger(self) -> ILogger:
+        if not self._parent_context:
+            raise RuntimeError("CompositeState accessed logger before parent context was bound.")
+        return self._parent_context.logger
+
+    @property
+    def events(self) -> IEventBus:
+        if not self._parent_context:
+            raise RuntimeError("CompositeState accessed events before parent context was bound.")
+        return self._parent_context.events
 
     def transition_to(self, new_sub_state: State) -> None:
         """Fulfills IContext for children."""
@@ -21,6 +34,7 @@ class CompositeState(State, IContext):
 
     def handle(self, context: 'IContext') -> None:
         """Fulfills State for parent. Delegates downward."""
+        self._parent_context = context
         if self._current_sub_state:
             self._current_sub_state.handle(self)
         

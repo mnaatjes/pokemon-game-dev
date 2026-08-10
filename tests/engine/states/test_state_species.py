@@ -5,6 +5,10 @@ class MockContext(IContext):
     def __init__(self):
         self.next_state = None
         self.is_stopped = False
+    @property
+    def logger(self): return None
+    @property
+    def events(self): return None
         
     def transition_to(self, new_state: State) -> None:
         self.next_state = new_state

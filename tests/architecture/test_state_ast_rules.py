@@ -71,6 +71,10 @@ def test_ast_linter_catches_violations():
 # Execution Time Tests
 # ---------------------------------------------------------
 class MockContext(IContext):
+    @property
+    def logger(self): return None
+    @property
+    def events(self): return None
     def transition_to(self, new_state: State) -> None: pass
     def stop(self) -> None: pass
 
